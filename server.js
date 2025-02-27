@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:3000", // Local development
+  "http://localhost:5173", // Local development
   "https://gradly-one.vercel.app", // Deployed frontend
 ];
 
@@ -36,10 +36,7 @@ app.use("/auth", userRoutes);
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI, {})
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
