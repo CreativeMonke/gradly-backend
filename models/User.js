@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Define the user schema
 const userSchema = new mongoose.Schema(
@@ -48,5 +48,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true } // Adds createdAt and updatedAt fields automatically
 );
 
-// Create and export the model
-module.exports = mongoose.model('User', userSchema);
+// Export the model as the default export
+const User = mongoose.model('User', userSchema);
+export default User;

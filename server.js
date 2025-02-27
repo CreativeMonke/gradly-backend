@@ -1,24 +1,28 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import userRoutes from './routes/userRoutes.js';
+
+dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(express.json());  // This is middleware for parsing JSON
-app.use(cors());          // This allows cross-origin requests
-
-// Import the routes
-const userRoutes = require('./routes/userRoutes');  // Ensure this path is correct
+app.use(express.json());  // Middleware for parsing JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());          // Enable cross-origin requests
 
 // Use the routes
-app.use('/users', userRoutes);
+app.use('/auth', userRoutes);
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Basic route
 app.get('/', (req, res) => {
