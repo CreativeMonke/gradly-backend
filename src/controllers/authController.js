@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import User from "../models/user.model.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -45,7 +45,7 @@ export const registerUser = async (req, res) => {
     res.status(201).json({
       message: "User registered successfully",
       status: "success",
-      data: { ...userData, token },
+      data: { user: userData, token },
     });
   } catch (error) {
     console.error("Registration Error:", error);
@@ -77,13 +77,13 @@ export const loginUser = async (req, res) => {
         .json({ message: "Invalid email or password", status: "error" });
     }
 
-    const sessionToken = generateToken(user._id);
+    const token = generateToken(user._id);
     const { password: _, ...userData } = user.toObject();
 
     res.status(200).json({
       message: "Login successful",
       status: "success",
-      data: { ...userData, sessionToken },
+      data: { user: userData, token },
     });
   } catch (error) {
     console.error("Login Error:", error);
