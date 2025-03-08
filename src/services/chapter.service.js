@@ -1,31 +1,40 @@
 import Chapter from "../models/chapter.model.js";
-import SupabaseStorageService from '../services/supabaseStorage.service.js';
+import SupabaseStorageService from "../services/supabaseStorage.service.js";
 
 class ChapterService {
   /**
-   * Create a new chapter
+   * Create a new chapter (handles file uploads)
    */
-  static async createChapter(req, res) {
-    try {
-      const { title, subject } = req.body;
-      let uploadedFiles = [];
+  static async createChapter(data, files) {
+    let uploadedFiles = [];
 
-      // Process uploaded files
-      if (req.files && req.files.length > 0) {
+    try {
+      // Upload files to Supabase
+      if (files && files.length > 0) {
         uploadedFiles = await Promise.all(
-          req.files.map((file) => SupabaseStorageService.uploadFile(file))
+          files.map((file) => SupabaseStorageService.uploadFile(file))
         );
       }
 
-      const chapter = await ChapterService.createChapter({
-        title,
-        subject,
+      const chapter = new Chapter({
+        ...data,
         materials: uploadedFiles,
       });
 
-      return res.status(201).json({ status: "success", data: chapter });
+      await chapter.save();
+      return chapter;
     } catch (error) {
-      return res.status(400).json({ status: "error", message: error.message });
+      console.error("Error creating chapter:", error.message);
+
+      // ❌ If chapter creation fails, delete uploaded files from Supabase
+      if (uploadedFiles.length > 0) {
+        await Promise.all(
+          uploadedFiles.map((file) =>
+            SupabaseStorageService.deleteFile(file.fileUrl)
+          )
+        );
+      }
+      throw new Error(error.message);
     }
   }
 
@@ -41,22 +50,55 @@ class ChapterService {
   }
 
   /**
-   * Update a chapter by ID
+   * Update a chapter by ID (handles file uploads)
    */
-  static async updateChapter(id, updateData) {
+  static async updateChapter(id, updateData, files) {
     try {
-      return await Chapter.findByIdAndUpdate(id, updateData, { new: true });
+      const chapter = await Chapter.findById(id);
+      if (!chapter) throw new Error("Chapter not found");
+
+      let uploadedFiles = chapter.materials; // Keep existing files
+
+      // Upload new files (replace old ones)
+      if (files && files.length > 0) {
+        // ❌ Delete old files first
+        await Promise.all(
+          chapter.materials.map((file) =>
+            SupabaseStorageService.deleteFile(file.fileUrl)
+          )
+        );
+
+        uploadedFiles = await Promise.all(
+          files.map((file) => SupabaseStorageService.uploadFile(file))
+        );
+      }
+
+      chapter.set({ ...updateData, materials: uploadedFiles });
+      await chapter.save();
+      return chapter;
     } catch (error) {
       throw new Error(error.message);
     }
   }
 
   /**
-   * Delete a chapter by ID
+   * Delete a chapter by ID (and remove its files from Supabase)
    */
   static async deleteChapter(id) {
     try {
-      return await Chapter.findByIdAndDelete(id);
+      const chapter = await Chapter.findById(id);
+      if (!chapter) throw new Error("Chapter not found");
+
+      // ❌ Delete files from Supabase
+      await Promise.all(
+        chapter.materials.map((file) => {
+          SupabaseStorageService.deleteFile(file.fileUrl);
+          console.log("Deleted file:", file.fileUrl);
+        })
+      );
+
+      await chapter.deleteOne();
+      return { message: "Chapter deleted" };
     } catch (error) {
       throw new Error(error.message);
     }

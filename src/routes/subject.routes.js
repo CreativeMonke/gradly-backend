@@ -16,4 +16,5 @@ router.put('/:id', authenticateToken, SubjectController.updateSubject);
 // Delete a subject by ID
 router.delete('/:id', authenticateToken, SubjectController.deleteSubject);
 
+
 export default router;

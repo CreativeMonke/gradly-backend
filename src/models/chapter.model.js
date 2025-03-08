@@ -22,7 +22,8 @@ const chapterSchema = new Schema(
       {
         filename: String, // Original filename
         fileType: String, // MIME type (e.g., "application/pdf")
-        fileUrl: String, // URL from Supabase
+        fileUrl: String, // URL from Supabase,
+        filePublicUrl: String, // Public URL from Supabase
         uploadedAt: { type: Date, default: Date.now },
       },
     ],

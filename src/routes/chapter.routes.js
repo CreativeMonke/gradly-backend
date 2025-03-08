@@ -12,7 +12,7 @@ router.post('/', authenticateToken, upload.array('files', 5), ChapterController.
 router.get('/', authenticateToken, ChapterController.getChapters);
 
 // Update a chapter by ID
-router.put('/:id', authenticateToken, ChapterController.updateChapter);
+router.put('/:id', authenticateToken, upload.array('files', 5), ChapterController.updateChapter);
 
 // Delete a chapter by ID
 router.delete('/:id', authenticateToken, ChapterController.deleteChapter);

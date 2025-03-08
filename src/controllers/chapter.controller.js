@@ -1,4 +1,4 @@
-import ChapterService from "../services/chapter.service.js";
+import ChapterService from '../services/chapter.service.js';
 
 class ChapterController {
   /**
@@ -6,10 +6,18 @@ class ChapterController {
    */
   static async createChapter(req, res) {
     try {
-      const chapter = await ChapterService.createChapter(req.body);
-      return res.status(201).json({ status: "success", data: chapter });
+      const { title, subject, description, markdownContent } = req.body;
+
+      const chapter = await ChapterService.createChapter({
+        title,
+        subject,
+        description,
+        markdownContent,
+      }, req.files); // Pass files directly to service
+
+      return res.status(201).json({ status: 'success', data: chapter });
     } catch (error) {
-      return res.status(400).json({ status: "error", message: error.message });
+      return res.status(400).json({ status: 'error', message: error.message });
     }
   }
 
@@ -20,9 +28,9 @@ class ChapterController {
     try {
       const filters = req.query;
       const chapters = await ChapterService.getChapters(filters);
-      return res.status(200).json({ status: "success", data: chapters });
+      return res.status(200).json({ status: 'success', data: chapters });
     } catch (error) {
-      return res.status(500).json({ status: "error", message: error.message });
+      return res.status(500).json({ status: 'error', message: error.message });
     }
   }
 
@@ -32,10 +40,12 @@ class ChapterController {
   static async updateChapter(req, res) {
     try {
       const { id } = req.params;
-      const updatedChapter = await ChapterService.updateChapter(id, req.body);
-      return res.status(200).json({ status: "success", data: updatedChapter });
+      const updateData = req.body;
+
+      const updatedChapter = await ChapterService.updateChapter(id, updateData, req.files);
+      return res.status(200).json({ status: 'success', data: updatedChapter });
     } catch (error) {
-      return res.status(400).json({ status: "error", message: error.message });
+      return res.status(400).json({ status: 'error', message: error.message });
     }
   }
 
@@ -46,11 +56,9 @@ class ChapterController {
     try {
       const { id } = req.params;
       await ChapterService.deleteChapter(id);
-      return res
-        .status(200)
-        .json({ status: "success", message: "Chapter deleted" });
+      return res.status(200).json({ status: 'success', message: 'Chapter deleted' });
     } catch (error) {
-      return res.status(400).json({ status: "error", message: error.message });
+      return res.status(400).json({ status: 'error', message: error.message });
     }
   }
 }
