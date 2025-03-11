@@ -18,7 +18,6 @@ class SubjectService {
    * Get subjects by filters (user-created, marketplace, etc.)
    */
   static async getSubjects(filter = {}) {
-    console.log(filter);
     try {
       return await Subject.find(filter);
     } catch (error) {

@@ -7,7 +7,7 @@ import studySessionRoutes from "./routes/study-session.routes.js";
 import studyTaskRoutes from "./routes/study-task.routes.js";
 import subjectRoutes from "./routes/subject.routes.js";
 import chapterRoutes from "./routes/chapter.routes.js";
-
+import aiRoutes from "./routes/ai.routes.js";
 dotenv.config();
 
 const app = express();
@@ -15,6 +15,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://gradly-one.vercel.app",
+  "http://192.168.100.13:5173",
 ];
 
 app.use(
@@ -42,6 +43,7 @@ app.use("/study-sessions", studySessionRoutes);
 app.use("/study-tasks", studyTaskRoutes);
 app.use("/subjects", subjectRoutes);
 app.use("/chapters", chapterRoutes);
+app.use('/ai', aiRoutes);
 
 // Default Route
 app.get("/", (req, res) => {

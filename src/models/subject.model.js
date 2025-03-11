@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const { Schema, model, Types } = mongoose;
 
@@ -14,14 +14,26 @@ const subjectSchema = new Schema(
       type: String,
       trim: true,
     },
+
     subjectCategory: {
       type: String,
       required: true,
-      enum: ['mate-info', 'stiinte', 'filo', 'tehnologic', 'pedagogic', 'university-admission'],
+      enum: [
+        "math-computer-science", // Matematică-Informatică
+        "natural-sciences", // Științe ale Naturii
+        "philology", // Filologie
+        "social-sciences", // Științe Sociale
+        "technical-sciences", // Științe Tehnice
+        "natural-resources-environment", // Resurse Naturale și Protecția Mediului
+        "economic-sciences", // Științe Economice
+        "arts", // Arte
+        "sports", // Sport
+        "pedagogy", // Pedagogie
+      ],
     },
     createdBy: {
       type: Types.ObjectId,
-      ref: 'User', // References the user who created it
+      ref: "User", // References the user who created it
       default: null, // Null if it is pre-built
     },
     isMarketplaceVisible: {
@@ -35,7 +47,7 @@ const subjectSchema = new Schema(
     chapters: [
       {
         type: Types.ObjectId,
-        ref: 'Chapter', // References multiple chapters
+        ref: "Chapter", // References multiple chapters
       },
     ],
   },
@@ -44,6 +56,6 @@ const subjectSchema = new Schema(
   }
 );
 
-const Subject = model('Subject', subjectSchema);
+const Subject = model("Subject", subjectSchema);
 
 export default Subject;

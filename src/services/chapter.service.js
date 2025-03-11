@@ -37,13 +37,14 @@ class ChapterService {
       throw new Error(error.message);
     }
   }
+  
 
   /**
    * Get chapters by filters (subject, user-created, etc.)
    */
   static async getChapters(filter = {}) {
     try {
-      return await Chapter.find(filter).populate("subject");
+      return await Chapter.find(filter).populate("subjectId");
     } catch (error) {
       throw new Error(error.message);
     }
@@ -92,7 +93,7 @@ class ChapterService {
       // ❌ Delete files from Supabase
       await Promise.all(
         chapter.materials.map((file) => {
-          SupabaseStorageService.deleteFile(file.fileUrl);
+          const data = SupabaseStorageService.deleteFile(file.fileUrl);
           console.log("Deleted file:", file.fileUrl);
         })
       );

@@ -4,7 +4,7 @@ const { Schema, model, Types } = mongoose;
 
 const chapterSchema = new Schema(
   {
-    subject: {
+    subjectId: {
       type: Types.ObjectId,
       ref: "Subject",
       required: true,
@@ -46,6 +46,10 @@ const chapterSchema = new Schema(
     isCompleted: {
       type: Boolean,
       default: false,
+    },
+    currentProgress: {
+      type: Number,
+      default: 0,
     },
     completionDate: {
       type: Date,

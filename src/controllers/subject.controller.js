@@ -6,10 +6,25 @@ class SubjectController {
    */
   static async createSubject(req, res) {
     try {
-      const subject = await SubjectService.createSubject(req.body);
-      return res.status(201).json({ status: "success", data: subject });
+      const { userId } = req.user; // Extract userId from the authenticated user
+
+      const subjectData = {
+        ...req.body,
+        createdBy: userId, // Set createdBy to the authenticated user ID
+      };
+
+      const subject = await SubjectService.createSubject(subjectData);
+
+      return res.status(201).json({
+        status: "success",
+        message: "Subject created successfully",
+        data: subject,
+      });
     } catch (error) {
-      return res.status(400).json({ status: "error", message: error.message });
+      return res.status(400).json({
+        status: "error",
+        message: error.message,
+      });
     }
   }
 
@@ -34,7 +49,13 @@ class SubjectController {
     try {
       const { id } = req.params;
       const updatedSubject = await SubjectService.updateSubject(id, req.body);
-      return res.status(200).json({ status: "success", data: updatedSubject });
+      return res
+        .status(200)
+        .json({
+          status: "success",
+          message: "Subject updated successfully",
+          data: updatedSubject,
+        });
     } catch (error) {
       return res.status(400).json({ status: "error", message: error.message });
     }
@@ -46,10 +67,14 @@ class SubjectController {
   static async deleteSubject(req, res) {
     try {
       const { id } = req.params;
-      await SubjectService.deleteSubject(id);
+      const deletedSubject = await SubjectService.deleteSubject(id);
       return res
         .status(200)
-        .json({ status: "success", message: "Subject deleted" });
+        .json({
+          status: "success",
+          message: "Subject deleted",
+          data: deletedSubject,
+        });
     } catch (error) {
       return res.status(400).json({ status: "error", message: error.message });
     }
