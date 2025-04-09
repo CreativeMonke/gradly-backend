@@ -37,8 +37,15 @@ class ChapterService {
       throw new Error(error.message);
     }
   }
-  
 
+  static async bulkCreateChapters(chapters) {
+    try {
+      const createdChapters = await Chapter.insertMany(chapters);
+      return createdChapters;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
   /**
    * Get chapters by filters (subject, user-created, etc.)
    */
@@ -54,6 +61,7 @@ class ChapterService {
    * Update a chapter by ID (handles file uploads)
    */
   static async updateChapter(id, updateData, files) {
+    console.log("files",files);
     try {
       const chapter = await Chapter.findById(id);
       if (!chapter) throw new Error("Chapter not found");
@@ -62,16 +70,11 @@ class ChapterService {
 
       // Upload new files (replace old ones)
       if (files && files.length > 0) {
-        // ❌ Delete old files first
-        await Promise.all(
-          chapter.materials.map((file) =>
-            SupabaseStorageService.deleteFile(file.fileUrl)
-          )
-        );
-
-        uploadedFiles = await Promise.all(
+        const newlyUploadedFiles = await Promise.all(
           files.map((file) => SupabaseStorageService.uploadFile(file))
         );
+
+        uploadedFiles = [...chapter.materials, ...newlyUploadedFiles]; // ✅ Merge instead of replace
       }
 
       chapter.set({ ...updateData, materials: uploadedFiles });

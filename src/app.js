@@ -8,6 +8,7 @@ import studyTaskRoutes from "./routes/study-task.routes.js";
 import subjectRoutes from "./routes/subject.routes.js";
 import chapterRoutes from "./routes/chapter.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
+import fileRoutes from "./routes/file.routes.js";
 dotenv.config();
 
 const app = express();
@@ -44,7 +45,7 @@ app.use("/study-tasks", studyTaskRoutes);
 app.use("/subjects", subjectRoutes);
 app.use("/chapters", chapterRoutes);
 app.use('/ai', aiRoutes);
-
+app.use("/files", fileRoutes);
 // Default Route
 app.get("/", (req, res) => {
   res.send("Gradly Backend v0.2 is running!");

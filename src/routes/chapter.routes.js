@@ -8,6 +8,8 @@ const router = express.Router();
 // Create a new chapter
 router.post('/', authenticateToken, upload.array('files', 5), ChapterController.createChapter);
 
+router.post('/bulk', authenticateToken, upload.array('files', 100), ChapterController.bulkCreateChapters);
+
 // Get all chapters with optional filters
 router.get('/', authenticateToken, ChapterController.getChapters);
 

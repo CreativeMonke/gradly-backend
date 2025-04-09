@@ -27,6 +27,24 @@ class ChapterController {
     }
   }
 
+  static async bulkCreateChapters(req, res) {
+    try {
+      const chapters = req.body;
+      console.log(req.body);
+      const createdChapters = await ChapterService.bulkCreateChapters(chapters);
+
+      // Update the subject with the created chapters
+      await Subject.findByIdAndUpdate(chapters[0].subjectId, {
+        $push: {
+          chapters: { $each: createdChapters.map((chapter) => chapter._id) },
+        },
+      });
+      return res.status(201).json({ status: "success", data: chapters });
+    } catch (error) {
+      return res.status(400).json({ status: "error", message: error.message });
+    }
+  }
+
   /**
    * Get chapters with optional filters
    */
@@ -48,7 +66,7 @@ class ChapterController {
     try {
       const { id } = req.params;
       const updateData = req.body;
-
+     // console.log(req);
       const updatedChapter = await ChapterService.updateChapter(
         id,
         updateData,
